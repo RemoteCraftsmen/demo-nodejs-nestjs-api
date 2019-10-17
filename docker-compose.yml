@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  mysql:
+    image: mariadb:10
+    container_name: mysql.nest-todo.docker
+    stdin_open: true
+    tty: true
+    networks:
+      - global
+    env_file:
+      - ./docker/mysql/config.env
+    volumes:
+      - ~/data/mysql.nest-todo.docker:/var/lib/mysql
+    restart: always
+    ports:
+      - 127.0.0.1:3388:3306
+
+  redis:
+    image: redis:latest
+    container_name: redis.nest-todo.docker
+    networks:
+      - global
+    ports:
+      - 127.0.0.1:7979:6379
+    command:
+      - 'bash'
+      - '-c'
+      - 'docker-entrypoint.sh --requirepass "$$REDIS_PASSWORD"'
+    env_file:
+      - ./docker/redis/config.env
+
+networks:
+  global:
+    external: true

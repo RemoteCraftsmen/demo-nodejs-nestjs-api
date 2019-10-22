@@ -17,6 +17,10 @@ export class UserService {
         return await this.userRepository.findOne(id);
     }
 
+    async findOne(where): Promise<User> {
+        return await this.userRepository.findOne(where);
+    }
+
     async update(id, data) {
         // @TODO: add return type
         await this.userRepository.update(id, data);

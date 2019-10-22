@@ -45,4 +45,8 @@ export class AuthService {
 
         return user;
     }
+
+    truncate() {
+        return this.userRepository.clear();
+    }
 }

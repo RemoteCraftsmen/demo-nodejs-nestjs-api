@@ -40,4 +40,8 @@ export class TodoService {
         // @TODO: add return type
         return await this.todoRepository.delete(id);
     }
+
+    truncate() {
+        return this.todoRepository.clear();
+    }
 }

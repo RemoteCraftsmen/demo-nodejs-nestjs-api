@@ -7,12 +7,12 @@ export class TodoController {
     constructor(private todoService: TodoService) {}
 
     @Get()
-    async index(@Request() request): Promise<Object> {
+    async index(@Request() request, @Response() response): Promise<Object> {
         const tasks = await this.todoService.get({
             user_id: request.session.user_id
         });
 
-        return { tasks };
+        return response.status(HttpStatus.OK).json({ tasks });
     }
 
     @Get(':id')
@@ -27,7 +27,7 @@ export class TodoController {
             return response.sendStatus(HttpStatus.FORBIDDEN);
         }
 
-        return todo;
+        return response.status(HttpStatus.OK).json(todo);
     }
 
     @Post()

@@ -2,12 +2,15 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Todo {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @Column()
-  name: string;
+    @Column()
+    user_id: number;
 
-  @Column()
-  completed: boolean;
+    @Column()
+    name: string;
+
+    @Column()
+    completed: boolean;
 }

@@ -6,7 +6,7 @@ import { Todo } from './todo.entity';
 export class TodoService {
     constructor(
         @Inject('TODO_REPOSITORY')
-        private readonly todoRepository: Repository<Todo>,
+        private readonly todoRepository: Repository<Todo>
     ) {}
 
     async findAll(): Promise<Todo[]> {
@@ -17,10 +17,15 @@ export class TodoService {
         return await this.todoRepository.findOne(id);
     }
 
-    create(name: string): Promise<Todo> {
+    async get(where): Promise<Todo[]> {
+        return await this.todoRepository.find(where);
+    }
+
+    create(name: string, user_id: number): Promise<Todo> {
         return this.todoRepository.save({
             name,
-            completed: false,
+            user_id,
+            completed: false
         });
     }
 

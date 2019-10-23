@@ -17,23 +17,25 @@
         "test:watch": "jest --watch",
         "test:cov": "jest --coverage",
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-        "test:e2e": "jest --config ./test/jest-e2e.json --detectOpenHandles"
+        "test:e2e": "jest --config ./test/jest-e2e.json --detectOpenHandles --forceExit"
     },
     "dependencies": {
         "@nestjs/common": "^6.7.2",
         "@nestjs/core": "^6.7.2",
         "@nestjs/platform-express": "^6.7.2",
+        "@nestjs/typeorm": "^6.2.0",
         "bcryptjs": "^2.4.3",
         "connect-redis": "^4.0.3",
         "cors": "^2.8.5",
         "dotenv": "^8.2.0",
         "express-session": "^1.17.0",
+        "mysql": "^2.17.1",
         "mysql2": "^1.7.0",
         "redis": "^2.8.0",
         "reflect-metadata": "^0.1.13",
         "rimraf": "^3.0.0",
         "rxjs": "^6.5.3",
-        "typeorm": "^0.2.19"
+        "typeorm": "^0.2.20"
     },
     "devDependencies": {
         "@nestjs/cli": "^6.9.0",

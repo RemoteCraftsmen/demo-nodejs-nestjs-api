@@ -7,6 +7,8 @@ import { AppModule } from '../src/app.module';
 
 import { AuthService } from '../src/modules/auth/auth.service';
 import { UserService } from '../src/modules/user/user.service';
+import { Connection, createConnection } from 'typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 const redisLib = require('redis');
 const config = require('../src/config');
@@ -26,6 +28,8 @@ describe('Auth Controller', () => {
     let app: INestApplication;
     let authService;
     let userService;
+    let testModule;
+    let connection;
 
     const userCredentials = {
         email: 'test@todo.test',
@@ -33,11 +37,27 @@ describe('Auth Controller', () => {
     };
 
     beforeAll(async () => {
-        const module = await Test.createTestingModule({
-            imports: [AppModule]
+        testModule = await Test.createTestingModule({
+            imports: [
+                AppModule,
+                TypeOrmModule.forRootAsync({
+                    name: 'default',
+                    useFactory: () => ({
+                        name: 'default',
+                        type: 'mysql',
+                        host: '127.0.0.1',
+                        port: 3388,
+                        username: 'todo',
+                        password: 'todo',
+                        database: 'todo',
+                        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+                        synchronize: false
+                    })
+                })
+            ]
         }).compile();
 
-        app = module.createNestApplication();
+        app = testModule.createNestApplication();
 
         app.use(
             session({

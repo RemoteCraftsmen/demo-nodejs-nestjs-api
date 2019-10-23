@@ -16,6 +16,9 @@ import { todoProviders } from './modules/todo/todo.providers';
 import { userProviders } from './modules/user/user.providers';
 import { databaseProviders } from './providers/database.providers';
 import { AuthMiddleware } from './middleware/auth.middleware';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { createConnection } from 'typeorm';
 
 @Module({
     imports: [TodoModule, UserModule],
@@ -27,7 +30,21 @@ import { AuthMiddleware } from './middleware/auth.middleware';
         AuthService,
         ...userProviders,
         ...todoProviders,
-        ...databaseProviders
+        {
+            provide: 'DATABASE_CONNECTION',
+            useFactory: async () =>
+                await createConnection({
+                    name: 'default',
+                    type: 'mysql',
+                    host: '127.0.0.1',
+                    port: 3388,
+                    username: 'todo',
+                    password: 'todo',
+                    database: 'todo',
+                    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+                    synchronize: false
+                })
+        }
     ]
 })
 export class AppModule {

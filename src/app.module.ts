@@ -20,8 +20,18 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { createConnection } from 'typeorm';
 
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { configValidationSchema } from './config/config.shcema';
+
 @Module({
-    imports: [TodoModule, UserModule],
+    imports: [
+        TodoModule,
+        UserModule,
+        ConfigModule.forRoot({
+            envFilePath: ['.env'],
+            validationSchema: configValidationSchema
+        })
+    ],
     controllers: [AppController, TodoController, AuthController],
     providers: [
         AppService,

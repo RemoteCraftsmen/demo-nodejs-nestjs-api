@@ -3,12 +3,12 @@ import { INestApplication, HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
 import * as session from 'express-session';
 
-import { AppModule } from '../src/app.module';
+import { AppModule } from '../src/AppModule';
 
 import { AuthService } from '../src/modules/auth/auth.service';
 import { TodoService } from '../src/modules/todo/todo.service';
 
-import { User } from '../src/modules/user/user.entity';
+import { User } from '../src/entities/User';
 
 const redisLib = require('redis');
 const config = require('../src/config');

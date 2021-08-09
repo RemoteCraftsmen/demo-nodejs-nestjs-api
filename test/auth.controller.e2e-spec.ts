@@ -3,7 +3,7 @@ import { INestApplication, HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
 import * as session from 'express-session';
 
-import { AppModule } from '../src/app.module';
+import { AppModule } from '../src/AppModule';
 
 import { AuthService } from '../src/modules/auth/auth.service';
 import { UserService } from '../src/modules/user/user.service';

@@ -1,8 +1,8 @@
-import { User } from '../../entities/User';
-import { getUser } from '../../decorators/getUser';
-import { Task } from '../../entities/Task';
-import { UpdateTaskDto } from '../../dto/UpdateTaskDto';
-import { TasksService } from '../../services/TasksService';
+import { User } from '@/entities/User';
+import { getUser } from '@/decorators/getUser';
+import { Task } from '@/entities/Task';
+import { UpdateTaskDto } from '@/dto/UpdateTaskDto';
+import { TasksService } from '@/services/TasksService';
 import { Controller, Patch, Param, Body } from '@nestjs/common';
 
 @Controller('api')

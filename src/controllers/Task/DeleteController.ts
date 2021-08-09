@@ -1,7 +1,7 @@
-import { User } from '../../entities/User';
-import { TasksService } from '../../services/TasksService';
+import { User } from '@/entities/User';
+import { TasksService } from '@/services/TasksService';
 import { Controller, Delete, Response, HttpStatus, Param } from '@nestjs/common';
-import { getUser } from 'src/decorators/getUser';
+import { getUser } from '@/decorators/getUser';
 
 @Controller('api')
 export class DeleteController {

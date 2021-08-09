@@ -1,9 +1,9 @@
-import { Task } from '../../entities/Task';
-import { User } from '../../entities/User';
-import { getUser } from '../../decorators/getUser';
-import { CreateTaskDto } from '../../dto/CreateTaskDto';
+import { Task } from '@/entities/Task';
+import { User } from '@/entities/User';
+import { getUser } from '@/decorators/getUser';
+import { CreateTaskDto } from '@/dto/CreateTaskDto';
 import { Post, Controller, Body } from '@nestjs/common';
-import { TasksService } from 'src/services/TasksService';
+import { TasksService } from '@/services/TasksService';
 
 @Controller('api/')
 export class CreateController {

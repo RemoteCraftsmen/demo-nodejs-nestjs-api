@@ -1,8 +1,8 @@
-import { UpdateUserDto } from '../dto/UpdateUserDto';
+import { UpdateUserDto } from '@/dto/UpdateUserDto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UsersRepository } from '../repositories/UsersRepository';
+import { UsersRepository } from '@/repositories/UsersRepository';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from '../entities/User';
+import { User } from '@/entities/User';
 
 @Injectable()
 export class UsersService {

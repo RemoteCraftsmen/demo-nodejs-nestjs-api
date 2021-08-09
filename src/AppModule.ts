@@ -42,7 +42,9 @@ import { Task } from './entities/Task';
 })
 export class AppModule {
     configure(consumer: MiddlewareConsumer) {
-        consumer.apply(AuthMiddleware).forRoutes({ path: '/api/tasks', method: RequestMethod.ALL });
-        consumer.apply(AuthMiddleware).forRoutes({ path: '/api/users', method: RequestMethod.GET });
+        consumer
+            .apply(AuthMiddleware)
+            .exclude({ path: '/api/auth', method: RequestMethod.ALL })
+            .forRoutes({ path: '/api/*', method: RequestMethod.ALL });
     }
 }

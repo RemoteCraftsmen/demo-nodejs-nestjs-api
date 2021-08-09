@@ -1,4 +1,4 @@
-import { UsersService } from '../../services/UsersService';
+import { UsersService } from '@/services/UsersService';
 import { Controller, Param, Delete, Response, HttpStatus } from '@nestjs/common';
 
 @Controller('api')

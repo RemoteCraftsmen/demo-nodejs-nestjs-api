@@ -1,5 +1,5 @@
-import { RegisterHandler } from './../../services/Auth/RegisterHandler';
-import { RegisterUserDto } from '../../dto/RegisterUserDto';
+import { RegisterHandler } from '@/services/Auth/RegisterHandler';
+import { RegisterUserDto } from '@/dto/RegisterUserDto';
 import { Post, Controller, Body } from '@nestjs/common';
 
 @Controller('api/auth')

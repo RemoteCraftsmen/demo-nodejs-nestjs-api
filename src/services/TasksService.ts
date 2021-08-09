@@ -1,11 +1,11 @@
-import { UpdateTaskDto } from '../dto/UpdateTaskDto';
-import { User } from '../entities/User';
-import { CreateTaskDto } from '../dto/CreateTaskDto';
-import { Task } from '../entities/Task';
+import { UpdateTaskDto } from '@/dto/UpdateTaskDto';
+import { User } from '@/entities/User';
+import { CreateTaskDto } from '@/dto/CreateTaskDto';
+import { Task } from '@/entities/Task';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TasksRepository } from '../repositories/TasksRepository';
+import { TasksRepository } from '@/repositories/TasksRepository';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { TaskStatus } from 'src/enums/TaskStatusEnum';
+import { TaskStatus } from '@/enums/TaskStatusEnum';
 import { DeleteResult } from 'typeorm';
 
 @Injectable()

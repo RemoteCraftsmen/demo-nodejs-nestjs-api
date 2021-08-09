@@ -1,7 +1,7 @@
-import { UsersRepository } from '../../repositories/UsersRepository';
-import { AuthCredentialsDto } from '../../dto/AuthCredentialsDto';
+import { UsersRepository } from '@/repositories/UsersRepository';
+import { AuthCredentialsDto } from '@/dto/AuthCredentialsDto';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { User } from '../../entities/User';
+import { User } from '@/entities/User';
 import { InjectRepository } from '@nestjs/typeorm';
 
 const bcrypt = require('bcryptjs');

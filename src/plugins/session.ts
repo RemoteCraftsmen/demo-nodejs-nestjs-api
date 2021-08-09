@@ -1,4 +1,4 @@
-import { RedisSessionStoreFactory } from './../providers/RedisSessionStoreFactory';
+import { RedisSessionStoreFactory } from '@/providers/RedisSessionStoreFactory';
 import { ConfigService } from '@nestjs/config';
 import * as session from 'express-session';
 

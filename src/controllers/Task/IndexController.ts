@@ -1,8 +1,8 @@
-import { User } from '../../entities/User';
-import { TasksService } from '../../services/TasksService';
-import { Task } from '../../entities/Task';
+import { User } from '@/entities/User';
+import { TasksService } from '@/services/TasksService';
+import { Task } from '@/entities/Task';
 import { Controller, Get } from '@nestjs/common';
-import { getUser } from 'src/decorators/getUser';
+import { getUser } from '@/decorators/getUser';
 
 @Controller('api')
 export class IndexController {

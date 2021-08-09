@@ -1,6 +1,6 @@
-import { User } from '../../entities/User';
-import { AuthCredentialsDto } from '../../dto/AuthCredentialsDto';
-import { LoginHandler } from '../../services/Auth/LoginHandler';
+import { User } from '@/entities/User';
+import { AuthCredentialsDto } from '@/dto/AuthCredentialsDto';
+import { LoginHandler } from '@/services/Auth/LoginHandler';
 import { Post, Controller, Body, Request } from '@nestjs/common';
 
 @Controller('api/auth')

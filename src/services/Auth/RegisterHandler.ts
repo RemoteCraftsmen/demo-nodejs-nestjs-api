@@ -1,7 +1,7 @@
-import { RegisterUserDto } from '../../dto/RegisterUserDto';
-import { UsersRepository } from '../../repositories/UsersRepository';
+import { RegisterUserDto } from '@/dto/RegisterUserDto';
+import { UsersRepository } from '@/repositories/UsersRepository';
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { User } from '../../entities/User';
+import { User } from '@/entities/User';
 import { InjectRepository } from '@nestjs/typeorm';
 
 const bcrypt = require('bcryptjs');

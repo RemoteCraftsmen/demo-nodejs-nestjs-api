@@ -1,7 +1,7 @@
-import { getUser } from '../../decorators/getUser';
-import { User } from '../../entities/User';
-import { TasksService } from 'src/services/TasksService';
-import { Task } from '../../entities/Task';
+import { getUser } from '@/decorators/getUser';
+import { User } from '@/entities/User';
+import { TasksService } from '@/services/TasksService';
+import { Task } from '@/entities/Task';
 import { Controller, Get, Param } from '@nestjs/common';
 
 @Controller('api')

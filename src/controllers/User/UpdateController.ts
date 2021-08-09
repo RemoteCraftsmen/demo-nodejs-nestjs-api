@@ -1,6 +1,6 @@
-import { UpdateUserDto } from '../../dto/UpdateUserDto';
-import { UsersService } from '../../services/UsersService';
-import { User } from '../../entities/User';
+import { UpdateUserDto } from '@/dto/UpdateUserDto';
+import { UsersService } from '@/services/UsersService';
+import { User } from '@/entities/User';
 import { Controller, Patch, Param, Body } from '@nestjs/common';
 
 @Controller('api')

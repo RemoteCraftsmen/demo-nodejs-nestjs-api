@@ -1,5 +1,5 @@
 import { User } from './User';
-import { TaskStatus } from '../enums/TaskStatusEnum';
+import { TaskStatus } from '@/enums/TaskStatusEnum';
 import { Exclude } from 'class-transformer';
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 

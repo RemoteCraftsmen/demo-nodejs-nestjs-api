@@ -3,23 +3,23 @@ version: '3'
 services:
     mysql:
         image: mysql:5.7
-        container_name: mysql.${MYSQL_NAME}.docker
+        container_name: mysql.${COMPOSE_PROJECT_NAME}.docker
         restart: unless-stopped
         environment:
-            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-            MYSQL_DATABASE: ${MYSQL_NAME}
-            MYSQL_USER: ${MYSQL_USER}
-            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${DATABASE_NAME}
+            MYSQL_USER: ${DATABASE_USERNAME}
+            MYSQL_PASSWORD: ${DATABASE_PASSWORD}
         volumes:
-            - ~/data/${MYSQL_NAME}.docker:/var/lib/mysql
+            - ~/data/${DATABASE_NAME}.docker:/var/lib/mysql
         ports:
-            - ${MYSQL_PORT}:3306
+            - ${DATABASE_PORT}:3306
         networks:
             - global
 
     redis:
         image: redis:latest
-        container_name: redis.${MYSQL_NAME}.docker
+        container_name: redis.${COMPOSE_PROJECT_NAME}.docker
         networks:
             - global
         ports:

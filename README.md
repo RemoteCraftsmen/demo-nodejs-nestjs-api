@@ -30,6 +30,9 @@ $ npm run start:prod
 ## Test
 
 ```bash
+# start docker containers
+docker-compose up -f docker-compose.test.yml -d
+
 # unit tests
 $ npm run test
 

@@ -18,6 +18,6 @@ export class User {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
 
-    @OneToMany(() => Task, task => task.user, { eager: true })
+    @OneToMany(() => Task, task => task.user, { eager: true, onDelete: 'CASCADE' })
     tasks: Task[];
 }

@@ -1,139 +1,42 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, HttpStatus } from '@nestjs/common';
-import * as request from 'supertest';
-import * as session from 'express-session';
+import { TestService } from './services/TestService';
+import { HttpStatus } from '@nestjs/common';
 
-import { AppModule } from '../src/app.module';
-
-import { AuthService } from '../src/modules/auth/auth.service';
-import { UserService } from '../src/modules/user/user.service';
-import { Connection, createConnection } from 'typeorm';
-import { TypeOrmModule } from '@nestjs/typeorm';
-
-const redisLib = require('redis');
-const config = require('../src/config');
-
-const RedisStore = require('connect-redis')(session);
-
-const redisClient = redisLib.createClient({
-    ...config.redis
-});
-
-const redisStore = new RedisStore({
-    client: redisClient
-});
+const testService = new TestService();
 
 describe('Auth Controller', () => {
-    let API;
-    let app: INestApplication;
-    let authService;
-    let userService;
-    let testModule;
-    let connection;
-
-    const userCredentials = {
-        email: 'test@todo.test',
-        password: 'somePassword'
-    };
-
     beforeAll(async () => {
-        testModule = await Test.createTestingModule({
-            imports: [
-                AppModule,
-                TypeOrmModule.forRootAsync({
-                    name: 'default',
-                    useFactory: () => ({
-                        name: 'default',
-                        type: 'mysql',
-                        host: '127.0.0.1',
-                        port: 3388,
-                        username: 'todo',
-                        password: 'todo',
-                        database: 'todo',
-                        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-                        synchronize: false
-                    })
-                })
-            ]
-        }).compile();
-
-        app = testModule.createNestApplication();
-
-        app.use(
-            session({
-                store: redisStore,
-                secret: config.app.secret,
-                resave: false,
-                saveUninitialized: false
-            })
-        );
-
-        await app.init();
-
-        API = request(app.getHttpServer());
-
-        authService = app.get<AuthService>(AuthService);
-        userService = app.get<UserService>(UserService);
+        await testService.initializeTestingEnvironment();
     });
 
     beforeEach(async () => {
-        await authService.truncate();
+        await testService.truncateDatabase();
     });
 
     it(`POST /api/auth/register`, async () => {
-        const registerResponse = await API.post('/api/auth/register').send({
-            ...userCredentials,
-            password_confirmation: userCredentials.password
-        });
+        const { status, body: registeredUser } = await testService.registerUser();
 
-        const user = await userService.findOne({ email: userCredentials.email });
-
-        expect(registerResponse.status).toEqual(HttpStatus.OK);
-        expect(!!user).toBeTruthy();
+        expect(status).toEqual(HttpStatus.CREATED);
+        expect(registeredUser).toHaveProperty('id');
     });
 
     it(`POST /api/auth/login`, async () => {
-        await API.post('/api/auth/register').send({
-            ...userCredentials,
-            password_confirmation: userCredentials.password
-        });
+        await testService.registerUser();
 
-        const { headers } = await API.post('/api/auth/login').send(userCredentials);
+        const { status, body: loggedUser } = await testService.loginUser();
 
-        const cookies = headers['set-cookie'][0];
-
-        const response = await API.get('/api/tasks').set('Cookie', cookies);
-
-        expect(response.status).toEqual(HttpStatus.OK);
-        expect(response.body.tasks.length).toEqual(0);
+        expect(status).toEqual(HttpStatus.OK);
+        expect(loggedUser).toHaveProperty('id');
     });
 
     it(`POST /api/auth/logout`, async () => {
-        await API.post('/api/auth/register').send({
-            ...userCredentials,
-            password_confirmation: userCredentials.password
-        });
+        await testService.registerUser();
 
-        const { headers } = await API.post('/api/auth/login').send(userCredentials);
+        const { headers } = await testService.loginUser();
 
-        const cookies = headers['set-cookie'][0];
+        const authCookies = headers['set-cookie'][0];
 
-        await API.get('/api/auth/logout').set('Cookie', cookies);
+        const { status } = await testService.logoutUser().set('Cookie', authCookies);
 
-        const response = await API.get('/api/tasks').set('Cookie', cookies);
-
-        expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
-    });
-
-    afterAll(async () => {
-        await new Promise(resolve => {
-            redisClient.quit(() => {
-                resolve();
-            });
-        });
-
-        await new Promise(resolve => setImmediate(resolve));
-
-        await app.close();
+        expect(status).toEqual(HttpStatus.OK);
     });
 });

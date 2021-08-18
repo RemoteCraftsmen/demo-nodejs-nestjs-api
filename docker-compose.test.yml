@@ -3,7 +3,7 @@ version: '3'
 services:
     mysql:
         image: mysql:5.7
-        container_name: mysql.${COMPOSE_PROJECT_NAME}.docker
+        container_name: mysql.${COMPOSE_PROJECT_NAME}-test.docker
         restart: unless-stopped
         environment:
             MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
@@ -19,7 +19,7 @@ services:
 
     redis:
         image: redis:latest
-        container_name: redis.${COMPOSE_PROJECT_NAME}.docker
+        container_name: redis.${COMPOSE_PROJECT_NAME}-test.docker
         networks:
             - global
         ports:

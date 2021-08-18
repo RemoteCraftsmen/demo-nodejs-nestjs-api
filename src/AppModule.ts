@@ -11,8 +11,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './config/schema';
 import config from './config';
-import { User } from './entities/User';
-import { Task } from './entities/Task';
 
 @Module({
     imports: [
@@ -29,7 +27,7 @@ import { Task } from './entities/Task';
                 return {
                     type: dbConfig.dialect,
                     ...dbConfig,
-                    entities: [User, Task],
+                    entities: [__dirname + '/entities/*.{ts,js}'],
                     synchronize: true
                 };
             }
@@ -44,7 +42,10 @@ export class AppModule {
     configure(consumer: MiddlewareConsumer) {
         consumer
             .apply(AuthMiddleware)
-            .exclude({ path: '/api/auth', method: RequestMethod.ALL })
+            .exclude(
+                { path: '/api/auth/register', method: RequestMethod.POST },
+                { path: '/api/auth/login', method: RequestMethod.POST }
+            )
             .forRoutes({ path: '/api/*', method: RequestMethod.ALL });
     }
 }

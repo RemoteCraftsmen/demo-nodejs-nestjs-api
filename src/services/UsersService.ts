@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UsersRepository } from '@/repositories/UsersRepository';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '@/entities/User';
+import { DeleteResult } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -39,5 +40,9 @@ export class UsersService {
 
     delete(id: string): void {
         this.usersRepository.delete(id);
+    }
+
+    truncate(): Promise<DeleteResult> {
+        return this.usersRepository.delete({});
     }
 }

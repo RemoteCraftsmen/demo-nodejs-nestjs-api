@@ -1,156 +1,113 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, HttpStatus } from '@nestjs/common';
-import * as request from 'supertest';
-import * as session from 'express-session';
+import { TestService } from './services/TestService';
+import { HttpStatus } from '@nestjs/common';
 
-import { AppModule } from '../src/AppModule';
-
-import { AuthService } from '../src/modules/auth/auth.service';
-import { TodoService } from '../src/modules/todo/todo.service';
-
-import { User } from '../src/entities/User';
-
-const redisLib = require('redis');
-const config = require('../src/config');
-
-const RedisStore = require('connect-redis')(session);
-
-const redisClient = redisLib.createClient({
-    ...config.redis
-});
-
-const redisStore = new RedisStore({
-    client: redisClient
-});
+const testService = new TestService();
 
 describe('Todo Controller', () => {
-    let API;
-    let app: INestApplication;
-    let authService;
-    let todoService;
-    let user: User;
-
-    const userCredentials = {
-        email: 'test@todo.test',
-        password: 'somePassword'
-    };
-
     beforeAll(async () => {
-        const module = await Test.createTestingModule({
-            imports: [AppModule]
-        }).compile();
-
-        app = module.createNestApplication();
-
-        app.use(
-            session({
-                store: redisStore,
-                secret: config.app.secret,
-                resave: false,
-                saveUninitialized: false
-            })
-        );
-
-        await app.init();
-
-        API = request(app.getHttpServer());
-
-        authService = app.get<AuthService>(AuthService);
-        todoService = app.get<TodoService>(TodoService);
+        await testService.initializeTestingEnvironment();
     });
 
     beforeEach(async () => {
-        await authService.truncate();
-        await todoService.truncate();
-
-        user = await authService.register(userCredentials.email, userCredentials.password);
+        await testService.truncateDatabase();
+        await testService.registerUser();
     });
 
     it(`GET /api/tasks`, async () => {
-        const { headers } = await API.post('/api/auth/login').send(userCredentials);
+        const { headers } = await testService.loginUser();
 
-        const cookies = headers['set-cookie'][0];
+        const authCookies = headers['set-cookie'][0];
 
-        await todoService.create('test1', user.id);
-        await todoService.create('test2', user.id);
+        const { status, body: tasks } = await testService.api.get('/api/tasks').set('Cookie', authCookies);
 
-        const response = await API.get('/api/tasks').set('Cookie', cookies);
-
-        expect(response.status).toEqual(HttpStatus.OK);
-        expect(response.body.tasks.length).toEqual(2);
+        expect(status).toEqual(HttpStatus.OK);
+        expect(tasks).toEqual([]);
     });
 
     it(`POST /api/tasks`, async () => {
-        const { headers } = await API.post('/api/auth/login').send(userCredentials);
+        const { headers, body: loggedUser } = await testService.loginUser();
 
-        const cookies = headers['set-cookie'][0];
+        const authCookies = headers['set-cookie'][0];
 
-        const response = await API.post(`/api/tasks`)
-            .send({
-                name: 'test'
-            })
-            .set('Cookie', cookies);
+        const { status, body: newTask } = await testService.api
+            .post('/api/tasks')
+            .send({ title: 'test', description: 'test' })
+            .set('Cookie', authCookies);
 
-        expect(response.status).toEqual(HttpStatus.CREATED);
-        expect(response.body.name).toEqual('test');
-        expect(response.body.user_id).toEqual(user.id);
+        expect(status).toEqual(HttpStatus.CREATED);
+        expect(newTask).toMatchObject({
+            title: 'test',
+            description: 'test',
+            status: 'OPEN',
+            user: {
+                id: loggedUser.id
+            }
+        });
     });
 
     it(`GET /api/tasks/{id}`, async () => {
-        const { headers } = await API.post('/api/auth/login').send(userCredentials);
+        const { headers } = await testService.loginUser();
 
-        const cookies = headers['set-cookie'][0];
+        const authCookies = headers['set-cookie'][0];
 
-        const task = await todoService.create('test1', user.id);
+        const { body: newTask } = await testService.api
+            .post('/api/tasks')
+            .send({ title: 'test', description: 'test' })
+            .set('Cookie', authCookies);
 
-        const response = await API.get(`/api/tasks/${task.id}`).set('Cookie', cookies);
+        const { status, body: task } = await testService.api.get(`/api/tasks/${newTask.id}`).set('Cookie', authCookies);
 
-        expect(response.status).toEqual(HttpStatus.OK);
-        expect(response.body.name).toEqual(task.name);
-        expect(response.body.user_id).toEqual(user.id);
+        expect(status).toEqual(HttpStatus.OK);
+        expect(task).toMatchObject({
+            id: newTask.id,
+            title: 'test',
+            description: 'test',
+            status: 'OPEN'
+        });
     });
 
     it(`PATCH /api/tasks/{id}`, async () => {
-        const { headers } = await API.post('/api/auth/login').send(userCredentials);
+        const { headers } = await testService.loginUser();
 
-        const cookies = headers['set-cookie'][0];
+        const authCookies = headers['set-cookie'][0];
 
-        const task = await todoService.create('test1', user.id);
+        const { body: newTask } = await testService.api
+            .post('/api/tasks')
+            .send({ title: 'test', description: 'test' })
+            .set('Cookie', authCookies);
 
-        const response = await API.patch(`/api/tasks/${task.id}`)
-            .send({
-                name: 'updated'
-            })
-            .set('Cookie', cookies);
+        const { status, body: updatedTask } = await testService.api
+            .patch(`/api/tasks/${newTask.id}`)
+            .send({ title: 'updated', description: 'updated', status: 'IN_PROGRESS' })
+            .set('Cookie', authCookies);
 
-        expect(response.status).toEqual(HttpStatus.OK);
-        expect(response.body.name).toEqual('updated');
-        expect(response.body.user_id).toEqual(user.id);
+        expect(status).toEqual(HttpStatus.OK);
+        expect(updatedTask).toMatchObject({
+            id: newTask.id,
+            title: 'updated',
+            description: 'updated',
+            status: 'IN_PROGRESS'
+        });
     });
 
     it(`DELETE /api/tasks/{id}`, async () => {
-        const { headers } = await API.post('/api/auth/login').send(userCredentials);
+        const { headers } = await testService.loginUser();
 
-        const cookies = headers['set-cookie'][0];
+        const authCookies = headers['set-cookie'][0];
 
-        const task = await todoService.create('test1', user.id);
+        const { body: newTask } = await testService.api
+            .post('/api/tasks')
+            .send({ title: 'test', description: 'test' })
+            .set('Cookie', authCookies);
 
-        await API.delete(`/api/tasks/${task.id}`).set('Cookie', cookies);
+        const { status } = await testService.api.delete(`/api/tasks/${newTask.id}`).set('Cookie', authCookies);
 
-        const response = await API.get(`/api/tasks/${task.id}`).set('Cookie', cookies);
+        expect(status).toEqual(HttpStatus.NO_CONTENT);
 
-        expect(response.status).toEqual(HttpStatus.NOT_FOUND);
-    });
+        const { status: deletedTaskResponseStatus } = await testService.api
+            .get(`/api/tasks/${newTask.id}`)
+            .set('Cookie', authCookies);
 
-    afterAll(async () => {
-        await new Promise(resolve => {
-            redisClient.quit(() => {
-                resolve();
-            });
-        });
-
-        await new Promise(resolve => setImmediate(resolve));
-
-        await app.close();
+        expect(deletedTaskResponseStatus).toEqual(HttpStatus.NOT_FOUND);
     });
 });

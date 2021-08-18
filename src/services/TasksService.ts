@@ -54,4 +54,8 @@ export class TasksService {
     delete(id: string, user: User): Promise<DeleteResult> {
         return this.tasksRepository.delete({ id, user });
     }
+
+    truncate(): Promise<DeleteResult> {
+        return this.tasksRepository.delete({});
+    }
 }

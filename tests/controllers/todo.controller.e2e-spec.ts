@@ -1,4 +1,4 @@
-import { TestService } from './services/TestService';
+import { TestService } from '../Bootstrap';
 import { HttpStatus } from '@nestjs/common';
 
 const testService = new TestService();

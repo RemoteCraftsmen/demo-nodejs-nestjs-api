@@ -1,13 +1,17 @@
+
+import * as request from 'supertest-session';
+
 import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+
 import { UsersService } from '@/services/UsersService';
 import { useSession } from '@/plugins/session';
 import { AppModule } from '@/AppModule';
-import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
 import { TasksService } from '@/services/TasksService';
 
 export class TestService {
-    private app: INestApplication;
+    public app: INestApplication;
+    
     private userCredentials: { email: string; password: string } = {
         email: 'test@todo.test',
         password: 'somePassword'
@@ -32,21 +36,6 @@ export class TestService {
         await this.app.init();
 
         this.api = request(this.app.getHttpServer());
-    };
-
-    registerUser = () => {
-        return this.api.post('/api/auth/register').send({
-            ...this.userCredentials,
-            passwordRepeat: this.userCredentials.password
-        });
-    };
-
-    loginUser = async () => {
-        return this.api.post('/api/auth/login').send(this.userCredentials);
-    };
-
-    logoutUser = () => {
-        return this.api.get('/api/auth/logout');
     };
 
     truncateDatabase = async () => {

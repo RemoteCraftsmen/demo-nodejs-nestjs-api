@@ -16,7 +16,7 @@ describe('Create Todo Controller', () => {
     });
 
     it(`POST /api/tasks`, async () => {
-        const userData = await userFactory.generate();
+        const userData = userFactory.generate();
         await userFactory.create(userData);
 
 

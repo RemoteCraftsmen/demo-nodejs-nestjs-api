@@ -1,4 +1,4 @@
-const faker = require('faker');
+import * as faker from 'faker';
 
 import { TestService } from "../Bootstrap";
 import { RegisterHandler } from "@/services/Auth/RegisterHandler";
@@ -10,14 +10,14 @@ export class UserFactory {
     ) 
     {}
 
-    generate = () => {
+    generate(){
         return  {
             email: faker.internet.email(),
             password: faker.internet.password()
         };
     }
 
-    create= async (props) =>  {
+    create = async (props) =>  {
         const email= props.email;
         const password= props.password;
 

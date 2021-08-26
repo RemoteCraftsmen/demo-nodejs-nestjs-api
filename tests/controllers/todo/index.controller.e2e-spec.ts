@@ -16,7 +16,7 @@ describe('Index Todo Controller', () => {
     });
 
     it(`GET /api/tasks`, async () => {
-        const userData = await userFactory.generate();
+        const userData = userFactory.generate();
         await userFactory.create(userData);
 
         await testService.api.post('/api/auth/login').send({

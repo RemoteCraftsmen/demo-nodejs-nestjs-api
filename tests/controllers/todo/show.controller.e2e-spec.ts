@@ -18,7 +18,7 @@ describe('Show Todo Controller', () => {
     });
 
     it(`GET /api/tasks/{id}`, async () => {
-        const userData = await userFactory.generate();
+        const userData = userFactory.generate();
         await userFactory.create(userData);
 
         

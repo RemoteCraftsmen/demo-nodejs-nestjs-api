@@ -6,20 +6,19 @@ import { UserFactory } from '../../factories/user';
 const testService = new TestService();
 const userFactory = new UserFactory(testService);
 
+let userData;
+
 describe('Create Todo Controller', () => {
     beforeAll(async () => {
         await testService.initializeTestingEnvironment();
+        await testService.truncateDatabase();
+
+        userData = userFactory.generate();
+        await userFactory.create(userData);
     });
 
-    beforeEach(async () => {
-        await testService.truncateDatabase();
-    });
 
     it(`POST /api/tasks`, async () => {
-        const userData = userFactory.generate();
-        await userFactory.create(userData);
-
-
         const { body: loggedUser } = await testService.api.post('/api/auth/login').send({
             ...userData
         });
@@ -38,4 +37,9 @@ describe('Create Todo Controller', () => {
             }
         });
     });
+
+    /* ToDo implement
+        it('returns BAD_REQUEST sending no data as USER', async () => {
+    */
+
 });

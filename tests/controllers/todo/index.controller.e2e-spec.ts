@@ -7,25 +7,39 @@ const testService = new TestService();
 const userFactory = new UserFactory(testService);
 
 describe('Index Todo Controller', () => {
-    beforeAll(async () => {
-        await testService.initializeTestingEnvironment();
-    });
-
-    beforeEach(async () => {
-        await testService.truncateDatabase();
-    });
-
-    it(`GET /api/tasks`, async () => {
-        const userData = userFactory.generate();
-        await userFactory.create(userData);
-
-        await testService.api.post('/api/auth/login').send({
-            ...userData
+    describe('GET /api/tasks', () => {
+        beforeAll(async () => {
+            await testService.initializeTestingEnvironment();
         });
 
-        const { status, body: tasks } = await testService.api.get('/api/tasks');
+        beforeEach(async () => {
+            await testService.truncateDatabase();
+        });
 
-        expect(status).toEqual(HttpStatus.OK);
-        expect(tasks).toEqual([]);
+        it(`returns OK with all todos that belongs to user as USER`, async () => {
+            //ToDo add tasks and check if it returns all tasks that belong to user
+            const userData = userFactory.generate();
+            await userFactory.create(userData);
+
+            await testService.api.post('/api/auth/login').send({
+                ...userData
+            });
+
+            const { status, body: tasks } = await testService.api.get('/api/tasks');
+
+            expect(status).toEqual(HttpStatus.OK);
+            expect(tasks).toEqual([]);
+        });
+/*ToDo
+        it(`returns UNAUTHORIZED as NOT-LOGGED-IN`, async () => {
+
+            await testService.api.post('/api/auth/logout');
+            const { status, body: tasks } = await testService.api.get('/api/tasks');
+
+            expect(status).toEqual(HttpStatus.OK);
+            expect(tasks).toEqual([]);
+        });
+
+ */
     });
 });

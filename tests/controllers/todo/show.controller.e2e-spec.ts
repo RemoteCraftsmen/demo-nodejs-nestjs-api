@@ -9,35 +9,59 @@ const userFactory = new UserFactory(testService);
 
 
 describe('Show Todo Controller', () => {
-    beforeAll(async () => {
-        await testService.initializeTestingEnvironment();
-    });
+    describe('GET /api/tasks/{id}', () => {
+            beforeAll(async () => {
+            await testService.initializeTestingEnvironment();
+        });
 
-    beforeEach(async () => {
-        await testService.truncateDatabase();
-    });
+        beforeEach(async () => {
+            await testService.truncateDatabase();
+        });
 
-    it(`GET /api/tasks/{id}`, async () => {
-        const userData = userFactory.generate();
-        await userFactory.create(userData);
+        it(`returns OK when TODO exists as USER`, async () => {
+            const userData = userFactory.generate();
+            await userFactory.create(userData);
 
         
-        await testService.api.post('/api/auth/login').send({
-            ...userData
+            await testService.api.post('/api/auth/login').send({
+                ...userData
+            });
+
+            const { body: newTask } = await testService.api
+                .post('/api/tasks')
+                .send({ title: 'test', description: 'test' });
+
+            const { status, body: task } = await testService.api.get(`/api/tasks/${newTask.id}`);
+
+            expect(status).toEqual(HttpStatus.OK);
+            expect(task).toMatchObject({
+                id: newTask.id,
+                title: 'test',
+                description: 'test',
+                status: 'OPEN'
+            });
         });
 
-        const { body: newTask } = await testService.api
-            .post('/api/tasks')
-            .send({ title: 'test', description: 'test' });
+        it(`returns NOT_FOUND if todo doesn't exist as USER`, async () => {
+            const userData = userFactory.generate();
+            await userFactory.create(userData);
 
-        const { status, body: task } = await testService.api.get(`/api/tasks/${newTask.id}`);
+            await testService.api.post('/api/auth/login').send({
+                ...userData
+            });
 
-        expect(status).toEqual(HttpStatus.OK);
-        expect(task).toMatchObject({
-            id: newTask.id,
-            title: 'test',
-            description: 'test',
-            status: 'OPEN'
+            const { body: newTask } = await testService.api
+                .post('/api/tasks')
+                .send({ title: 'test', description: 'test' });
+
+            const { status, body: task } = await testService.api.get(`/api/tasks/task_does_not_exist`);
+
+            expect(status).toEqual(HttpStatus.NOT_FOUND);
         });
+        /*Todo
+            it('returns NOT_FOUND if belongs to another user as USER', async () => {
+            it('returns FORBIDDEN  as Not Logged in', async () => {
+
+         */
     });
 });
